@@ -103,14 +103,18 @@ app.post("/api/users/:id/favorites", isLoggedIn, async (req, res, next) => {
   }
 });
 
-app.delete("/api/users/:user_id/favorites/:id", isLoggedIn, async (req, res, next) => {
-  try {
-    await destroyFavorite({ user_id: req.params.user_id, id: req.params.id });
-    res.sendStatus(204);
-  } catch (ex) {
-    next(ex);
+app.delete(
+  "/api/users/:user_id/favorites/:id",
+  isLoggedIn,
+  async (req, res, next) => {
+    try {
+      await destroyFavorite({ user_id: req.params.user_id, id: req.params.id });
+      res.sendStatus(204);
+    } catch (ex) {
+      next(ex);
+    }
   }
-});
+);
 
 app.get("/api/products", async (req, res, next) => {
   try {
@@ -134,13 +138,18 @@ const init = async () => {
 
   await createTables();
   console.log("tables created");
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword1 = await bcrypt.hash("m_pw", salt);
+  const hashedPassword2 = await bcrypt.hash("l_pw", salt);
+  const hashedPassword3 = await bcrypt.hash("e_pw", salt);
+  const hashedPassword4 = await bcrypt.hash("c_pw", salt);
 
   const [moe, lucy, ethyl, curly, foo, bar, bazz, quq, fip] = await Promise.all(
     [
-      createUser({ username: "moe", hashedPassword: "m_pw" }),
-      createUser({ username: "lucy", hashedPassword: "l_pw" }),
-      createUser({ username: "ethyl", hashedPassword: "e_pw" }),
-      createUser({ username: "curly", hashedPassword: "c_pw" }),
+      createUser({ username: "moe", hashedPassword: hashedPassword1 }),
+      createUser({ username: "lucy", hashedPassword: hashedPassword2 }),
+      createUser({ username: "ethyl", hashedPassword: hashedPassword3 }),
+      createUser({ username: "curly", hashedPassword: hashedPassword4 }),
       createProduct({ name: "foo" }),
       createProduct({ name: "bar" }),
       createProduct({ name: "bazz" }),
